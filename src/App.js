@@ -18,6 +18,7 @@ function App() {
   const [seconds, setSeconds] = useState(10);
   const [minValue, setMinValue] = useState(1);
   const [maxValue, setMaxValue] = useState(5);
+  const [bias, setBias] = useState(0);
   const [currentString, setCurrentString] = useState("");
 
   const directions = ["left", "right"];
@@ -32,13 +33,13 @@ function App() {
 
   const _handleCallout = useCallback(() => {
     const value = getRandomInteger(minValue, maxValue);
-    const direction = directions[getRandomInteger(0, 1)];
+    const direction = directions[getRandomInteger(0, 200) > 100 + bias ? 1 : 0];
     const newCurrentString = value + " " + direction;
     setCurrentString(newCurrentString);
     messageObject.text = newCurrentString;
     window.speechSynthesis.speak(messageObject);
     setTick((previousValue) => !previousValue);
-  }, [minValue, maxValue]);
+  }, [minValue, maxValue, bias]);
 
   return (
     <div className="App">
@@ -78,6 +79,21 @@ function App() {
               setMinValue(value[0]);
               setMaxValue(value[1]);
             }}
+          />
+        </div>
+        <div className="App-slider">
+          <Typography id="discrete-slider-custom" gutterBottom>
+            {"Left / Right Bias Percentage"}
+          </Typography>
+          <Slider
+            defaultValue={bias}
+            aria-labelledby="discrete-slider-small-steps"
+            step={1}
+            min={-100}
+            max={100}
+            valueLabelDisplay="on"
+            style={{ marginLeft: 20 }}
+            onChange={(_, value) => setBias(value)}
           />
         </div>
         <button
